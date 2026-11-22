@@ -183,5 +183,4 @@ data/
 # modelo treinado (gerado pelo modelo/treinar.py)
 modelo/*.joblib
 
-# codigo antigo (fora do projeto)
-estrutura antiga/
+
