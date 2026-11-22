@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recomendação de Grupos de Milho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Montserrat", Arial, sans-serif;
+            background-color: #f6f6f1;
+            color: #2f5233;
+            margin: 0;
+        }
+
+        /* topo */
+        .topo {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 30px;
+            padding: 30px 40px 20px 40px;
+        }
+        .titulo {
+            font-size: 34px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 0;
+            max-width: 560px;
+        }
+        .parametros h3 {
+            margin: 0 0 12px 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .campos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            align-items: flex-end;
+        }
+        .campo label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .campo select {
+            font-family: inherit;
+            font-size: 14px;
+            padding: 11px 12px;
+            border: 1px solid #e3e3dc;
+            border-radius: 6px;
+            background-color: white;
+            color: #333;
+            min-width: 200px;
+        }
+        .botao {
+            font-family: inherit;
+            font-size: 18px;
+            font-weight: 700;
+            background-color: #2f5233;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 45px;
+            cursor: pointer;
+        }
+        .botao:hover {
+            background-color: #24402a;
+        }
+
+        /* area principal */
+        .conteudo {
+            background-color: #f1f1ea;
+            margin: 0 0 0 40px;
+            padding: 30px;
+            min-height: 600px;
+        }
+        .vazio {
+            text-align: center;
+            padding: 120px 20px;
+            font-size: 18px;
+            color: #6b7f6d;
+        }
+        .local {
+            font-size: 16px;
+            margin-bottom: 18px;
+        }
+
+        /* cards */
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+        .card {
+            flex: 1;
+            min-width: 210px;
+            background-color: white;
+            border-radius: 14px;
+            padding: 22px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .icone {
+            width: 58px;
+            height: 58px;
+            flex-shrink: 0;
+        }
+        .icone-texto {
+            font-size: 54px;
+            font-weight: 800;
+            color: #2f5233;
+            line-height: 58px;
+            text-align: center;
+        }
+        .card-titulo {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .card-valor {
+            font-size: 26px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        .card-detalhe {
+            font-size: 12px;
+            color: #6b7f6d;
+            margin-top: 3px;
+        }
+
+        /* graficos e resultado */
+        .linha {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+        .grafico {
+            flex: 1;
+            min-width: 300px;
+        }
+        .grafico h4 {
+            text-align: center;
+            font-weight: 500;
+            font-size: 17px;
+            margin: 0 0 15px 0;
+            color: #333;
+        }
+        .barra-linha {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .barra-rotulo {
+            width: 110px;
+            font-size: 12px;
+            text-align: right;
+            padding-right: 10px;
+            color: #333;
+        }
+        .barra-fundo {
+            flex: 1;
+            background-color: #e6e6df;
+            border-radius: 4px;
+        }
+        .barra {
+            height: 20px;
+            border-radius: 4px;
+            color: white;
+            font-size: 11px;
+            text-align: right;
+            padding-right: 6px;
+            line-height: 20px;
+            box-sizing: border-box;
+            white-space: nowrap;
+        }
+        .barra-linha.selecionada .barra-rotulo {
+            font-weight: 700;
+            color: #2f5233;
+        }
+        .barra-linha.selecionada .barra-fundo {
+            outline: 2px solid #2f5233;
+        }
+        .fator .barra {
+            height: 34px;
+            line-height: 34px;
+            background-color: #2f5233;
+        }
+        .fator {
+            margin-bottom: 10px;
+            cursor: default;
+        }
+
+        .ciclo_20 { background-color: #2f5233; }
+        .ciclo_21 { background-color: #6f9a5a; }
+        .empate { background-color: #a9c39a; color: #2f5233; }
+        .nao_indicado { background-color: #c9c9c2; color: #555; }
+
+        .legenda {
+            font-size: 11px;
+            margin-top: 10px;
+            color: #333;
+        }
+        .legenda span {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 3px;
+            margin: 2px 4px 2px 0;
+        }
+
+        .resultado {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        .milho {
+            width: 90px;
+            height: 90px;
+        }
+        .resultado h4 {
+            font-size: 22px;
+            font-weight: 600;
+            text-decoration: underline;
+            margin: 8px 0 12px 0;
+        }
+        .grupo {
+            display: inline-block;
+            background-color: #2f5233;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            padding: 14px 45px;
+            text-decoration: underline;
+        }
+        .ciclo {
+            font-size: 15px;
+            margin-top: 8px;
+            text-decoration: underline;
+        }
+        .explicacao {
+            font-size: 16px;
+            margin-top: 14px;
+            line-height: 1.4;
+        }
+        .comparacao {
+            font-size: 13px;
+            margin-top: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .nota {
+            text-align: right;
+            font-size: 14px;
+            color: #2f5233;
+            padding: 25px 40px;
+            max-width: 450px;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topo">
+        <h1 class="titulo">Sistema de Recomendação de Grupos de Híbridos de Milho</h1>
+
+        <div class="parametros">
+            <h3>Parâmetros da consulta</h3>
+            <div class="campos">
+                <div class="campo">
+                    <label>Município</label>
+                    <select id="municipio">
+                        <option value="">Carregando...</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Tipo de solo</label>
+                    <select id="solo">
+                        <option value="1">Arenoso</option>
+                        <option value="2" selected>Textura média</option>
+                        <option value="3">Argiloso</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label>Período de plantio</label>
+                    <select id="decendio"></select>
+                </div>
+                <button class="botao" onclick="gerar()">CONSULTAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="conteudo">
+        <div id="vazio" class="vazio">Selecione o município, o tipo de solo e o período de plantio para consultar a recomendação.</div>
+
+        <div id="painel" style="display: none;">
+            <div class="local" id="local"></div>
+
+            <div class="cards">
+                <div class="card">
+                    <svg class="icone" viewBox="0 0 64 64" fill="none" stroke="#5e9a6a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 38h28a10 10 0 0 0 0-20 14 14 0 0 0-27-3A9 9 0 0 0 18 38z"/>
+                        <path d="M22 46l-2 6M32 46l-2 6M42 46l-2 6"/>
+                    </svg>
+                    <div>
+                        <div class="card-titulo">Precipitação acumulada</div>
+                        <div class="card-valor" id="card_chuva"></div>
+                        <div class="card-detalhe">120 dias após o plantio (média histórica)</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <svg class="icone" viewBox="0 0 64 64" fill="none" stroke="#5e9a6a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M26 38V12a6 6 0 0 1 12 0v26a10 10 0 1 1-12 0z"/>
+                        <path d="M32 22v24"/>
+                        <circle cx="32" cy="46" r="4"/>
+                        <path d="M44 14h6M44 20h4M44 26h6M44 32h4"/>
+                    </svg>
+                    <div>
+                        <div class="card-titulo">Temperatura média</div>
+                        <div class="card-valor" id="card_temp"></div>
+                        <div class="card-detalhe">agosto a março (média histórica)</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <svg class="icone" viewBox="0 0 64 64" fill="none" stroke="#5e9a6a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="10" y="28" width="44" height="24" rx="2"/>
+                        <path d="M10 38h44M10 45h44"/>
+                        <path d="M20 10v12M16 18l4 4 4-4M32 10v12M28 18l4 4 4-4M44 10v12M40 18l4 4 4-4"/>
+                    </svg>
+                    <div>
+                        <div class="card-titulo">Tipo de solo</div>
+                        <div class="card-valor" id="card_solo"></div>
+                        <div class="card-detalhe">classificação do ZARC</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="icone icone-texto">°C</div>
+                    <div>
+                        <div class="card-titulo">Soma térmica (GDD)</div>
+                        <div class="card-valor" id="card_gdd"></div>
+                        <div class="card-detalhe">120 dias após o plantio (média histórica)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="linha">
+                <div class="grafico">
+                    <h4>Risco climático por período de plantio(%)</h4>
+                    <div id="grafico_janela"></div>
+                    <div class="legenda">
+                        Cor = recomendação do modelo:
+                        <span class="ciclo_20">Grupo I</span>
+                        <span class="ciclo_21">Grupo II</span>
+                        <span class="empate">Grupos I e II</span>
+                        <span class="nao_indicado">Não indicado</span>
+                        <br>Tamanho = risco do ZARC (20%, 30% ou 40%). Clique em uma data para ver o resultado.
+                    </div>
+                </div>
+
+                <div class="grafico">
+                    <h4>Importância dos fatores na recomendação (%)</h4>
+                    <div id="grafico_fatores"></div>
+                </div>
+
+                <div class="resultado">
+                    <svg class="milho" viewBox="0 0 80 80" fill="none" stroke="#5e9a6a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M52 10c10 4 14 16 8 28L42 62c-6 6-16 2-16-6 0-4 2-8 4-10L44 18c2-4 4-8 8-8z"/>
+                        <path d="M40 24l12 6M36 32l14 7M32 40l14 7M30 48l10 5M46 16l-12 30M54 22l-14 32"/>
+                        <path d="M26 56c-8 4-14 12-14 18 8-2 16-8 20-14M30 48c-10-2-18 2-22 8 8 2 16 0 22-4"/>
+                    </svg>
+                    <h4>Grupo recomendado</h4>
+                    <div class="grupo" id="grupo"></div>
+                    <div class="ciclo" id="ciclo"></div>
+                    <div class="explicacao" id="explicacao"></div>
+                    <div class="comparacao" id="comparacao"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nota">
+        Nota: protótipo de apoio à decisão. As recomendações são baseadas em modelos de aprendizado de máquina,
+        dados históricos e no Zoneamento Agrícola de Risco Climático (ZARC), que mede risco climático e não produtividade.
+        Consulte sempre o ZARC vigente e um agrônomo.
+    </div>
+
+    <script>
+        // decendios da janela do estado (agosto a janeiro)
+        var datas = [
+            [22, "01-10/ago"], [23, "11-20/ago"], [24, "21-fim/ago"],
+            [25, "01-10/set"], [26, "11-20/set"], [27, "21-fim/set"],
+            [28, "01-10/out"], [29, "11-20/out"], [30, "21-fim/out"],
+            [31, "01-10/nov"], [32, "11-20/nov"], [33, "21-fim/nov"],
+            [34, "01-10/dez"], [35, "11-20/dez"], [36, "21-fim/dez"],
+            [1, "01-10/jan"], [2, "11-20/jan"], [3, "21-fim/jan"]
+        ];
+
+        // codigo interno -> nome oficial (Portaria SPA/MAPA n 193/2025)
+        var grupos = {
+            "ciclo_20": { nome: "GRUPO I", texto: "Grupo I (120 dias)", ciclo: "Ciclo médio: 120 dias" },
+            "ciclo_21": { nome: "GRUPO II", texto: "Grupo II (140 dias)", ciclo: "Ciclo médio: 140 dias" },
+            "empate": { nome: "GRUPO I ou II", ciclo: "Os dois grupos têm o mesmo risco" },
+            "nao_indicado": { nome: "NÃO INDICADO", ciclo: "Nenhum grupo indicado nesta data" }
+        };
+
+        var resultado = null;
+
+        function carregarMunicipios() {
+            fetch("/municipios")
+                .then(function (resposta) { return resposta.json(); })
+                .then(function (lista) {
+                    var select = document.getElementById("municipio");
+                    select.innerHTML = "";
+                    for (var i = 0; i < lista.length; i++) {
+                        var opcao = document.createElement("option");
+                        opcao.value = lista[i].id_municipio;
+                        opcao.text = lista[i].municipio;
+                        if (lista[i].municipio == "Chapecó") {
+                            opcao.selected = true;
+                        }
+                        select.appendChild(opcao);
+                    }
+                });
+        }
+
+        function carregarDatas() {
+            var select = document.getElementById("decendio");
+            for (var i = 0; i < datas.length; i++) {
+                var opcao = document.createElement("option");
+                opcao.value = datas[i][0];
+                opcao.text = datas[i][1];
+                if (datas[i][0] == 25) {
+                    opcao.selected = true;
+                }
+                select.appendChild(opcao);
+            }
+        }
+
+        function carregarFatores() {
+            fetch("/importancia")
+                .then(function (resposta) { return resposta.json(); })
+                .then(function (lista) {
+                    var maior = lista[0].importancia;
+                    var html = "";
+                    for (var i = 0; i < lista.length; i++) {
+                        var largura = lista[i].importancia / maior * 100;
+                        html = html + "<div class='barra-linha fator'>";
+                        html = html + "<div class='barra-rotulo'>" + lista[i].fator + "</div>";
+                        html = html + "<div class='barra-fundo'><div class='barra' style='width: " + largura + "%'>" + lista[i].importancia + "</div></div>";
+                        html = html + "</div>";
+                    }
+                    document.getElementById("grafico_fatores").innerHTML = html;
+                });
+        }
+
+        function gerar() {
+            var municipio = document.getElementById("municipio").value;
+            var solo = document.getElementById("solo").value;
+
+            fetch("/recomendacao?id_municipio=" + municipio + "&solo=" + solo)
+                .then(function (resposta) { return resposta.json(); })
+                .then(function (dados) {
+                    resultado = dados;
+                    document.getElementById("vazio").style.display = "none";
+                    document.getElementById("painel").style.display = "block";
+                    mostrar();
+                });
+        }
+
+        function escolherData(decendio) {
+            document.getElementById("decendio").value = decendio;
+            mostrar();
+        }
+
+        function mostrar() {
+            var decendio = document.getElementById("decendio").value;
+
+            // procura o decendio escolhido
+            var item = null;
+            for (var i = 0; i < resultado.decendios.length; i++) {
+                if (resultado.decendios[i].decendio == decendio) {
+                    item = resultado.decendios[i];
+                }
+            }
+
+            // janela recomendada
+            var primeiro = "";
+            var ultimo = "";
+            for (var i = 0; i < resultado.decendios.length; i++) {
+                if (resultado.decendios[i].recomendacao != "nao_indicado") {
+                    if (primeiro == "") {
+                        primeiro = resultado.decendios[i].periodo;
+                    }
+                    ultimo = resultado.decendios[i].periodo;
+                }
+            }
+
+            document.getElementById("local").innerHTML =
+                "<b>" + resultado.municipio + "</b> · " + resultado.regiao_climatica +
+                " · Janela recomendada: <b>" + primeiro + " até " + ultimo + "</b>";
+
+            // cards
+            document.getElementById("card_chuva").innerText = Math.round(item.indicadores.chuva_120d_mm) + " mm";
+            document.getElementById("card_temp").innerText = resultado.clima_municipio.temp_media + " °C";
+            document.getElementById("card_solo").innerText = resultado.solo_nome;
+            document.getElementById("card_gdd").innerText = Math.round(item.indicadores.soma_termica_120d) + " °C.dia";
+
+            // grafico da janela
+            var html = "";
+            for (var i = 0; i < resultado.decendios.length; i++) {
+                var d = resultado.decendios[i];
+                var classe = "barra-linha";
+                if (d.decendio == decendio) {
+                    classe = classe + " selecionada";
+                }
+                var largura = 100;
+                var texto = "não indicado";
+                if (d.zarc_menor_risco > 0) {
+                    largura = d.zarc_menor_risco / 40 * 100;
+                    texto = d.zarc_menor_risco + "%";
+                }
+                html = html + "<div class='" + classe + "' onclick='escolherData(" + d.decendio + ")'>";
+                html = html + "<div class='barra-rotulo'>" + d.periodo + "</div>";
+                html = html + "<div class='barra-fundo'><div class='barra " + d.recomendacao + "' style='width: " + largura + "%'>" + texto + "</div></div>";
+                html = html + "</div>";
+            }
+            document.getElementById("grafico_janela").innerHTML = html;
+
+            // grupo recomendado
+            var grupo = grupos[item.recomendacao];
+            document.getElementById("grupo").innerText = grupo.nome;
+            document.getElementById("ciclo").innerText = grupo.ciclo;
+
+            // o que o modelo preve e o que o ZARC oficial indica
+            var textoModelo = {
+                "ciclo_20": "o modelo prevê o Grupo I (120 dias) como o grupo de menor risco",
+                "ciclo_21": "o modelo prevê o Grupo II (140 dias) como o grupo de menor risco",
+                "empate": "o modelo prevê empate entre os Grupos I e II",
+                "nao_indicado": "o modelo prevê que nenhum grupo é indicado"
+            };
+            var textoZarc = {
+                "ciclo_20": "indica o Grupo I (120 dias)",
+                "ciclo_21": "indica o Grupo II (140 dias)",
+                "empate": "indica empate entre os Grupos I e II",
+                "nao_indicado": "não indica plantio nesta data"
+            };
+
+            var frase = "Para plantio em " + item.periodo + " em " + resultado.municipio +
+                " (solo " + resultado.solo_nome.toLowerCase() + "), " + textoModelo[item.recomendacao];
+
+            if (item.recomendacao == item.zarc_oficial) {
+                frase = frase + ", igual ao ZARC oficial.";
+            } else {
+                frase = frase + ", enquanto o ZARC oficial " + textoZarc[item.zarc_oficial] + ".";
+            }
+
+            if (item.recomendacao == "nao_indicado") {
+                frase = frase + " Prefira outra data dentro da janela recomendada.";
+            }
+            document.getElementById("explicacao").innerText = frase;
+
+            var risco = "não indicado";
+            if (item.zarc_menor_risco > 0) {
+                risco = "risco de " + item.zarc_menor_risco + "%";
+            }
+            document.getElementById("comparacao").innerHTML =
+                "Probabilidade estimada pelo modelo: <b>" + Math.round(item.confianca * 100) + "%</b><br>" +
+                "ZARC oficial: <b>" + item.zarc_oficial_nome + "</b> (" + risco + ")<br>" +
+                "Previsão na validação regional: <b>" + item.previsao_validacao_nome + "</b>";
+        }
+
+        carregarMunicipios();
+        carregarDatas();
+        carregarFatores();
+    </script>
+
+</body>
+</html>
